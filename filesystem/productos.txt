@@ -1,0 +1,51 @@
+[
+  {
+    "title": "calculadora",
+    "description": "descripcion del producto",
+    "code": "código del producto",
+    "timestamp": "creacion del producto",
+    "stock": "4",
+    "price": "312.6",
+    "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/calculator-math-tool-school-256.png",
+    "id": 1
+  },
+  {
+    "title": "Escuadra",
+    "description": "descripcion del producto",
+    "code": "código del producto",
+    "timestamp": "creacion del producto",
+    "stock": "4",
+    "price": "252.6",
+    "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/ruler-triangle-stationary-school-256.png",
+    "id": 2
+  },
+  {
+    "title": "Reloj",
+    "description": "descripcion del producto",
+    "code": "código del producto",
+    "timestamp": "creacion del producto",
+    "stock": "4",
+    "price": "33.6",
+    "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/clock-stopwatch-timer-time-256.png",
+    "id": 3
+  },
+  {
+    "title": "prod",
+    "description": "descr",
+    "code": "cod",
+    "timestamp": 1654483588236,
+    "price": "123",
+    "thumbnail": "url",
+    "id": 4
+  },
+  {
+    "title": "dde",
+    "description": "des",
+    "code": "code",
+    "timestamp": "[5/6/2022 23:59]",
+    "stock": "4",
+    "price": "123",
+    "thumbnail": "url",
+    "id": 5
+  }
+]
