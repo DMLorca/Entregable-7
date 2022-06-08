@@ -1,0 +1,28 @@
+
+<h1 style="font-size: 7mm;">Ingrese producto</h1>
+
+<form action="/api/productos/" method="post">
+    <br>
+    <h2 style="font-size: 5mm;">Nombre:</h2>
+    <input type="text" name="title"><br>
+    <br>
+    <h2 style="font-size: 5mm;">Descripcion:</h2>
+    <input type="text" name="description"><br>
+    <br>
+    <h2 style="font-size: 5mm;">Código:</h2>
+    <input type="text" name="code"><br>
+    <br>
+    <h2 style="font-size: 5mm;">Stock:</h2>
+    <input type="number" name="stock"><br>
+    <br>
+    <h2 style="font-size: 5mm;">Precio:</h2>
+    <input type="number" name="price"><br>
+    <br>
+    <h2 style="font-size: 5mm;">URL de foto:</h2>
+    <input type="text" name="thumbnail"><br>
+    <br><button type="submit">Enviar</button>
+    <a href="/api/productos/0"><input type="button" value="Ver"></a>
+    
+</form>
+
+<hr>

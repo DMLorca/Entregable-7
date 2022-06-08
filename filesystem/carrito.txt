@@ -1,0 +1,13 @@
+[
+    {
+    "title": "Calculadora",
+    "description": "ccambio de descr",
+    "code": "ert1",
+    "timestamp": "[8/6/2022 20:27]",
+    "stock": "1",
+    "price": "312.6",
+    "thumbnail": "https://cdn3.iconfinder.com/data/icons/education-209/64/calculator-math-tool-school-256.png",
+    "id": 1,
+    "id_carr":1
+  }
+]
