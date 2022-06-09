@@ -134,6 +134,25 @@ carroRouter.get('/', (req, res) => {
     res.render('form');
 });
 
+carroRouter.get('/:id', (req, res) => {
+    const prodId = parseInt(req.params.id);
+
+    if(prodId == 0){
+        contenedor.getAll().then((prod) => {
+            res.render('vista', {prod});
+        });
+    } else {
+        contenedor.getById(prodId).then((producto) => {
+            if (producto) {
+                let prod = [];
+                prod.push(producto);
+                res.render('vista', { prod });
+            } else
+                res.status(400).send({ error: 'Producto no encontrado' });
+        });
+    }
+});
+
 app.listen(8080, () => {
     console.log('Servidor levantado');
 });
