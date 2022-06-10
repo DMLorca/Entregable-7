@@ -35,7 +35,7 @@ const autorizacion = (req,res,next) => {
 
 //GET'/:id' = Lista todos los productos con id=0
 
-prodRouter.get('/:id', (req, res) => {
+prodRouter.get('/:id',autenticacion, (req, res) => {
     const prodId = parseInt(req.params.id);
 
     if(prodId == 0){
@@ -54,7 +54,7 @@ prodRouter.get('/:id', (req, res) => {
 
 //POST '/' = Incorpora productos
 
-prodRouter.post('/', (req, res) => {
+prodRouter.post('/',autenticacion, autorizacion, (req, res) => {
     const {title, description, code, stock, price, thumbnail} = req.body;
     const date = new Date();
     const objFecha = {
@@ -82,7 +82,7 @@ prodRouter.post('/', (req, res) => {
 
 //PUT '/:id' = Actualiza producto
 
-prodRouter.put('/:id', (req, res) => {
+prodRouter.put('/:id',autenticacion, autorizacion, (req, res) => {
     const prodId = parseInt(req.params.id);
     const {title, description, code, stock, price, thumbnail} = req.body;
 
