@@ -1,33 +1,37 @@
 const express = require('express');
+const req = require('express/lib/request');
 const app = express();
-const {engine} = require('express-handlebars');
+
 const prodRouter = express.Router();
 const carroRouter = express.Router();
 
-let modulo = require('./clases/Contenedor.js');
-let contenedor = new modulo.Contenedor('./filesystem/productos.txt');
+let moduloP = require('./clases/Contenedor.js');
+let moduloC = require('./clases/Contenedor_carrito.js');
+let contenedor = new moduloP.Contenedor('./filesystem/productos.txt');
+let contenedor_carrito = new moduloC.Contenedor_carrito('./filesystem/carrito.txt');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use('/api/productos', prodRouter);
 app.use('/api/carrito', carroRouter);
+app.use((req,res,next) => {
+    res.status(404).send({error: 'Error de ruta'});
+})
 
-
-app.set('view engine', 'hbs');
-app.set('views', './views');
-
-//Por defecto toma ext: handlebars y layouts/main.handlebars
-app.engine(
-    'hbs',
-    engine({
-        extname: '.hbs'
-    })
-);
-
-
-prodRouter.get('/', (req, res) => {
-    res.render('form');
-});
+const autenticacion = (req,res,next) => {
+    req.user = {
+        nombre: "Diego",
+        isAdmin: false
+    };
+    next();
+}
+const autorizacion = (req,res,next) => {
+    if (req.user.isAdmin) {
+        next();
+    } else {
+        res.status(401).send("Usuario no autorizado");
+    }
+}
 
 //GET'/:id' = Lista todos los productos con id=0
 
@@ -36,17 +40,15 @@ prodRouter.get('/:id', (req, res) => {
 
     if(prodId == 0){
         contenedor.getAll().then((prod) => {
-            res.render('vista', {prod});
+            res.send(prod);
         });
     } else {
-        contenedor.getById(prodId).then((producto) => {
-            if (producto) {
-                let prod = [];
-                prod.push(producto);
-                res.render('vista', { prod });
-            } else
-                res.status(400).send({ error: 'Producto no encontrado' });
-        });
+    contenedor.getById(prodId).then(result => {
+        if(result){
+            res.send(result);
+        }else
+            res.status(400).send({error: 'Producto no encontrado'});
+    });
     }
 });
 
@@ -74,7 +76,6 @@ prodRouter.post('/', (req, res) => {
 
     async function ejecutarSave(argObj) {
         await contenedor.save(argObj);
-        res.redirect('/api/productos');
     }
     ejecutarSave(obj); 
 });
@@ -113,7 +114,7 @@ prodRouter.put('/:id', (req, res) => {
 
 //DELETE '/:id' = Borra un producto
 
-prodRouter.delete('/:id', (req, res) => {
+prodRouter.delete('/:id',autenticacion, autorizacion, (req, res) => {
     const prodId = parseInt(req.params.id);
     const ejecutarDelete = async (prodId) => {
 
@@ -121,7 +122,6 @@ prodRouter.delete('/:id', (req, res) => {
 
         if (resultado == null) {
             res.status(400).send({ error: 'Producto no encontrado' });
-            res.redirect('/api/productos/0');
         } else{
             res.send(`Eliminado id: ${prodId}`);
         }
@@ -129,29 +129,78 @@ prodRouter.delete('/:id', (req, res) => {
     ejecutarDelete(prodId);
 });
 
+//POST '/' = Crea un carro y devuelve id
 
-carroRouter.get('/', (req, res) => {
-    res.render('form');
+carroRouter.post('/', (req, res) => {
+
+    async function makeCarro(){
+        const idc = await contenedor_carrito.addCarro();
+        res.send(`Carro creado idc=${idc}`);
+    }
+    makeCarro();
 });
 
-carroRouter.get('/:id', (req, res) => {
+//DELETE '/:id' = Vacia un carrito y lo elimina
+
+carroRouter.delete('/:id', (req, res) => {
+
     const prodId = parseInt(req.params.id);
 
-    if(prodId == 0){
-        contenedor.getAll().then((prod) => {
-            res.render('vista', {prod});
-        });
-    } else {
-        contenedor.getById(prodId).then((producto) => {
-            if (producto) {
-                let prod = [];
-                prod.push(producto);
-                res.render('vista', { prod });
-            } else
-                res.status(400).send({ error: 'Producto no encontrado' });
-        });
+    const ejecutarDelete = async (prodId) => {
+
+        const resultado = await contenedor_carrito.deleteCarro(prodId);
+        
+        if (resultado == null) {
+            res.status(400).send({ error: 'Carro no encontrado' });
+        } else{
+            res.send(`Eliminado carro id: ${prodId}`);
+        }
+    };
+    ejecutarDelete(prodId);
+})
+
+//GET: '/id/productos' Permite listar todos los prod guardados si id=0
+
+carroRouter.get('/:id/productos', (req, res) => {
+    const prodId = parseInt(req.params.id);
+
+    async function showProd(){
+        const productos = await contenedor_carrito.getById(prodId);
+        res.send(productos);
     }
+    showProd();
 });
+
+//POST '/:id/productos' = Incorpora productos al carro por su id
+
+carroRouter.post('/:id/productos', (req, res) => {
+    const prodId = parseInt(req.params.id);
+    const carro = parseInt(req.body);
+
+    contenedor.getById(prodId).then((producto) => {
+        if (producto) {
+            contenedor_carrito.addProd(producto, carro);
+        } else{
+            res.status(400).send({ error: 'Producto no encontrado' });
+        }
+    });
+
+})
+
+//DELETE ':id/productos/:id_prod' = Elimina un prod del carrito por su id de carro y producto
+
+carroRouter.delete('/:id/productos/:id_prod', (req, res) => {
+
+    const carroId = parseInt(req.params.id);
+    const prodId = parseInt(req.params.id_prod);
+
+    const ejecutarDelete = async () => {
+
+        const resultado = await contenedor_carrito.deleteById(carroId,prodId);
+        res.send(resultado);
+    };
+    ejecutarDelete();
+})
 
 app.listen(8080, () => {
     console.log('Servidor levantado');

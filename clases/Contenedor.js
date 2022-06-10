@@ -39,12 +39,12 @@ class Contenedor{
             const dataObj = JSON.parse(data);
             const dataObjId = dataObj.find(dataObj => dataObj.id === numberId);
             if(dataObjId){
-                return dataObjId;
+                return {dataObjId};
             }else{
                 return null;
             }
         } catch (error) {
-            console.log(`Problema en getById(): ${error}`);
+            console.log(`Problema en con getById(): ${error}`);
             
         }
     }
@@ -101,7 +101,6 @@ class Contenedor{
             const data = await fs.promises.readFile(this.nombreArchivo, 'utf-8');
             const dataObj = JSON.parse(data);
             const dataObjId = dataObj.find(dataObj => dataObj.id === numberId);
-            let i=0, stor1 = 0, stor2=0, stor3=0;
             if(dataObjId){
                 
                 for (let index = 0; index < dataObj.length; index++) {
@@ -109,33 +108,23 @@ class Contenedor{
                     if(dataObj[index].id == numberId){
                         if(tit){
                             dataObj[index].title = tit;
-                            i++;
                         }
                         if(des){
-                            i++;
                             dataObj[index].description = des;
                         }
                         if(cod){
-                            i++;
                             dataObj[index].code = cod;
                         }
                         if(timsta){
-                            i++;
                             dataObj[index].timestamp = timsta;
                         }
                         if(sto){
-                            i++;
-                            stor1 = dataObj[index].stock;
                             dataObj[index].stock = sto;
-                            stor2 = dataObj[index].stock;
-                            stor3 =sto;
                         }
                         if(pri){
-                            i++;
                             dataObj[index].price = pri;
                         }
                         if(thumb){
-                            i++;
                             dataObj[index].thumbnail = thumb;
                         }
                         
@@ -143,7 +132,7 @@ class Contenedor{
                     
                 }
                 await fs.promises.writeFile(this.nombreArchivo, JSON.stringify(dataObj, null, 2));
-                return (`${numberId} y ${i}, stor1 ${stor1}, stor2 ${stor2}, stor3 ${stor3}`);
+                return (numberId);
 
             }else{
                 return null;
