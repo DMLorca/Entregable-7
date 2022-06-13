@@ -39,7 +39,7 @@ class Contenedor{
             const dataObj = JSON.parse(data);
             const dataObjId = dataObj.find(dataObj => dataObj.id === numberId);
             if(dataObjId){
-                return {dataObjId};
+                return dataObjId;
             }else{
                 return null;
             }

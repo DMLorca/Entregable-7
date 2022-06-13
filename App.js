@@ -21,7 +21,7 @@ app.use((req,res,next) => {
 const autenticacion = (req,res,next) => {
     req.user = {
         nombre: "Diego",
-        isAdmin: false
+        isAdmin: true
     };
     next();
 }
@@ -74,10 +74,15 @@ prodRouter.post('/',autenticacion, autorizacion, (req, res) => {
         'thumbnail': thumbnail
     }
 
-    async function ejecutarSave(argObj) {
-        await contenedor.save(argObj);
-    }
-    ejecutarSave(obj); 
+
+    contenedor.save(obj).then(result => {
+        if(result){
+            res.send(`Agregado correctamente con id= ${result}`);
+        }else{
+            res.send("Problema al agragar producto");
+        }
+    })
+
 });
 
 //PUT '/:id' = Actualiza producto
@@ -175,12 +180,17 @@ carroRouter.get('/:id/productos', (req, res) => {
 
 carroRouter.post('/:id/productos', (req, res) => {
     const prodId = parseInt(req.params.id);
-    const carro = parseInt(req.body);
+    const {carro} = req.body;
 
     contenedor.getById(prodId).then((producto) => {
         if (producto) {
-            contenedor_carrito.addProd(producto, carro);
-        } else{
+            contenedor_carrito.addProd(producto, carro).then(result => {
+                if (result)
+                    res.send(`Producto agregado en carro ${carro}`);
+                else
+                    res.send("No existe el carro seleccionado");
+            })
+        } else {
             res.status(400).send({ error: 'Producto no encontrado' });
         }
     });
