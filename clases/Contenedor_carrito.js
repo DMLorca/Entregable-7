@@ -48,14 +48,10 @@ class Contenedor_carrito{
 
             const data = await fs.promises.readFile(this.nombreArchivo);
             const dataObj = JSON.parse(data);
-            carro = carro-1;
-            if(carro < dataObj.length){
-            dataObj[carro].push(prod);
+
+            dataObj[carro-1].push(prod);
             await fs.promises.writeFile(this.nombreArchivo, JSON.stringify(dataObj, null, 2));
             return (this.id);
-            }else{
-                return null;
-            }
 
         } catch (error) {
             console.log(`Problema en add(): ${error}`);
