@@ -1,4 +1,4 @@
-# Entregable-7
+# Primera-entrega-proyecto (Clase 14)
 
 Consigna: Deberás entregar el estado de avance de tu aplicación eCommerce Backend, que
 implemente un servidor de aplicación basado en la plataforma Node.js y el módulo express. El
